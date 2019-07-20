@@ -16,18 +16,18 @@ Will print the contents of said files to the console to check if values are corr
 ### 
 Renders properly any scene of the right dimensions depending on the camera attributes given.
 ### 
-Renders Sphere and Plane objects properly
+Renders Sphere and Plane objects properly.
 ### 
-Computes lighting properly, handles multiple lights
+Computes lighting properly, handles multiple lights.
 ### 
-Computes shadows properly, handles multiple shadows from multiple lights
+Computes shadows properly, handles multiple shadows from multiple lights.
 
 ## Key methods:
 
-* ComputePointLight -> used Phong model of light calculations
-* trace -> assigns the minimum point of intersection
-* cast_ray -> method that computes color of objects depending on whether or not there is intersection with ray
-* intersect -> computes whether or not there is an intersection with the ray and an object
+* ComputePointLight -> used Phong model of light calculations.
+* trace -> assigns the minimum point of intersection.
+* cast_ray -> method that computes color of objects depending on whether or not there is intersection with ray.
+* intersect -> computes whether or not there is an intersection with the ray and an object.
 
 ## Notes
 Program uses Cimg library to display images.
