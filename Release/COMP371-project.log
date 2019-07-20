@@ -1,0 +1,14 @@
+﻿  Camera.cpp
+c:\users\rose dufresne\source\repos\comp371-project\comp371-project\Camera.h(8): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
+  Light.cpp
+c:\users\rose dufresne\source\repos\comp371-project\comp371-project\Light.h(8): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
+  main.cpp
+main.cpp(11): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
+  Mesh.cpp
+c:\users\rose dufresne\source\repos\comp371-project\comp371-project\Mesh.h(8): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
+  Plane.cpp
+c:\users\rose dufresne\source\repos\comp371-project\comp371-project\Plane.h(8): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
+  Scene.cpp
+c:\users\rose dufresne\source\repos\comp371-project\comp371-project\Scene.h(10): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
+  Sphere.cpp
+c:\users\rose dufresne\source\repos\comp371-project\comp371-project\Sphere.h(8): fatal error C1083: Cannot open include file: 'glm.hpp': No such file or directory
