@@ -1,6 +1,8 @@
 # Ray-Tracing
 Computer Graphics (COMP 371) final project
 
+> GLM library and Cimg needed: ..\CImg_latest\CImg-2.5.5;..\glm;%(AdditionalIncludeDirectories)
+
 ## Instructions
 
 To change a file simply change the following at line 198 of the code:
