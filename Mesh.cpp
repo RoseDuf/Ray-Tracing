@@ -66,15 +66,9 @@ Mesh::Mesh(const char * _file, int nfaces,
 
 Mesh::~Mesh() {}
 
-//const char * Mesh::getFile() {
-//	return file;
-//}
-//void Mesh::setFile(const char * _file) {
-//	file = _file;
-//}
-
-string Mesh::getFile() {
-	return file;
+const char * Mesh::getFile() {
+	return file.c_str(); //need to do conversion inside this function or else pointer will lose information on the string
+	//very weird
 }
 void Mesh::setFile(string _file) {
 	file = _file;

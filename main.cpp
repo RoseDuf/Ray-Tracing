@@ -195,7 +195,7 @@ void render(vector<shared_ptr<Object>> &objects, vector<shared_ptr<Mesh>> &meshe
 int main() {
 
 	//read scene file
-	Scene * scene = new Scene("scenes/scene2.txt");
+	Scene * scene = new Scene("scenes/mesh_scene1.txt");
 
 	//create objects
 	Camera * cam = new Camera();
@@ -222,7 +222,7 @@ int main() {
 	}
 
 	//RENDER SCENE
-	render(objects, mesh, light, cam);
+	//render(objects, mesh, light, cam);
 
 	//To show that scene was properly rendered with the right values
 	cout << "number of objects" << endl;
@@ -265,7 +265,6 @@ int main() {
 		cout << light[i].getDif().x << " " << light[i].getDif().y << " " << light[i].getDif().z << endl;
 		cout << light[i].getSpe().x << " " << light[i].getSpe().y << " " << light[i].getSpe().z << endl;
 	}
-	
 	
 	return 0;
 }

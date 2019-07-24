@@ -28,10 +28,7 @@ public:
 		std::vector<glm::vec2> UVs);
 	~Mesh();
 
-	//const char * getFile();
-	//void setFile(const char * file);
-
-	string getFile();
+	const char * getFile();
 	void setFile(string file);
 
 	/*glm::vec3 getAmb();
@@ -141,6 +138,7 @@ public:
 
 private:
 	string file; //where filename.obj is the OBJ file containing the mesh
+	//const char * file; //where filename.obj is the OBJ file containing the mesh
 	std::vector<int> indices;
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;

@@ -112,14 +112,14 @@ void Scene::ReadSceneFile(string file) {
 			shared_ptr<Mesh> newmesh(new Mesh());
 			float number;
 			string attribute;
-			//const char * file2 = NULL;
 			string filename;
 
 			float meshposx, meshposy, meshposz;
 
 			input >> attribute >> filename;
-			//file2 = filename.c_str();
 			newmesh->setFile(filename);
+			//const char * file2 = filename.c_str(); //NOTE: don't convert before everything. Do it last!
+			//newmesh->setFile(file2); //NOTE: don't convert before everything. Do it last!
 
 			input >> attribute >> meshposx >> meshposy >> meshposz;
 			glm::vec3 amb = glm::vec3(meshposx, meshposy, meshposz);
