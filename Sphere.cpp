@@ -3,19 +3,9 @@
 
 Sphere::Sphere() {
 	rad = 0;
-	/*pos = glm::vec3(0, 0, 0);
-	amb = glm::vec3(0, 0, 0);
-	dif = glm::vec3(0, 0, 0);
-	spe = glm::vec3(0, 0, 0);
-	shi = 0;*/
 }
-Sphere::Sphere(/*glm::vec3 _pos, */int _rad/*, glm::vec3 _amb, glm::vec3 _dif, glm::vec3 _spe, int _shi*/) {
+Sphere::Sphere(int _rad) {
 	rad = _rad;
-	/*pos = _pos;
-	amb = _amb;
-	dif = _dif;
-	spe = _spe;
-	shi = _shi;*/
 }
 Sphere::~Sphere() {}
 
@@ -30,42 +20,6 @@ void Sphere::setRadius(float _rad) {
 glm::vec3 Sphere::getNormal(glm::vec3 phit) {
 	return glm::normalize((phit - this->getPosition()) / rad);
 }
-
-//
-//glm::vec3 Sphere::getPosition() {
-//	return pos;
-//}
-//void Sphere::setPosition(glm::vec3 _pos) {
-//	pos = _pos;
-//}
-//
-//glm::vec3 Sphere::getAmb() {
-//	return amb;
-//}
-//void Sphere::setAmb(glm::vec3 _amb) {
-//	amb = _amb;
-//}
-//
-//glm::vec3 Sphere::getDif() {
-//	return dif;
-//}
-//void Sphere::setDif(glm::vec3 _dif) {
-//	dif = _dif;
-//}
-//
-//glm::vec3 Sphere::getSpe() {
-//	return spe;
-//}
-//void Sphere::setSpe(glm::vec3 _spe) {
-//	spe = _spe;
-//}
-//
-//float Sphere::getShi() {
-//	return shi;
-//}
-//void Sphere::setShi(float _shi) {
-//	shi = _shi;
-//}
 
 //computes if there is a point of intersection with the ray
 

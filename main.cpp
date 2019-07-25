@@ -20,9 +20,6 @@
 #include "Light.h"
 #include "Scene.h"
 
-//object loader stuff
-#include "objloaderIndex.h"
-
 //include Cimg library header
 #include "CImg.h"
 using namespace cimg_library;
@@ -49,24 +46,24 @@ glm::vec3 ComputePointLight(Light &light, glm::vec3 &norm, glm::vec3 &fragment_p
 }
 
 //trace but for mesh, unfinished
-bool traceMesh(glm::vec3 &orig, glm::vec3 &dir,
-	vector<shared_ptr<Mesh>> &meshes,
-	float &tNear, int &index, glm::vec2 &uv, shared_ptr<Mesh> &hitObject){
-
-	for (int k = 0; k < meshes.size(); k++) {
-		float tNearTriangle = INFINITY;
-		int indexTriangle;
-		glm::vec2 uvTriangle;
-		if (meshes[k]->intersect(orig, dir, tNearTriangle, indexTriangle, uvTriangle) && tNearTriangle < tNear) {
-			hitObject = meshes[k];
-			tNear = tNearTriangle;
-			index = indexTriangle;
-			uv = uvTriangle;
-		}
-	}
-
-	return (hitObject != nullptr);
-}
+//bool traceMesh(glm::vec3 &orig, glm::vec3 &dir,
+//	vector<shared_ptr<Mesh>> &meshes,
+//	float &tNear, int &index, glm::vec2 &uv, shared_ptr<Mesh> &hitObject){
+//
+//	for (int k = 0; k < meshes.size(); k++) {
+//		float tNearTriangle = INFINITY;
+//		int indexTriangle;
+//		glm::vec2 uvTriangle;
+//		if (meshes[k]->intersect(orig, dir, tNearTriangle, indexTriangle, uvTriangle) && tNearTriangle < tNear) {
+//			hitObject = meshes[k];
+//			tNear = tNearTriangle;
+//			index = indexTriangle;
+//			uv = uvTriangle;
+//		}
+//	}
+//
+//	return (hitObject != nullptr);
+//}
 
 //assigns the minimum point of intersection
 bool trace(glm::vec3 origin, glm::vec3 direction, vector<shared_ptr<Object>> objects, float &tmin, shared_ptr<Object> &object) {
@@ -122,7 +119,7 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 	}
 
 	//attempted raycasting of the mesh, unfortunalety it is unfinished
-	else if (traceMesh(rayorig, raydir, meshes, tmin, index, uv, mesh)) {
+	/*else if (traceMesh(rayorig, raydir, meshes, tmin, index, uv, mesh)) {
 		glm::vec3 phit = rayorig + raydir * tmin;
 		glm::vec3 nhit = glm::normalize(object->getNormal(phit));
 		glm::vec2 hitTexCoordinates;
@@ -133,7 +130,7 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 		float c = 0.3 * (1 - checker) + 0.7 * checker;
 
 		surfaceColor = glm::vec3(c * NdotView);
-	}
+	}*/
 
 	//resulting color
 	return surfaceColor;
@@ -254,6 +251,10 @@ int main() {
 	for (int i = 0; i < mesh.size(); i++) {
 		cout << "mesh info" << endl;
 		cout << mesh[i]->getFile() << endl;
+		cout << mesh[i]->getIndices()[0] << endl;
+		cout << mesh[i]->getVertices()[0].x << endl;
+		cout << mesh[i]->getNormals()[0].x << endl;
+		cout << mesh[i]->getUVs()[0].x << endl;
 		cout << mesh[i]->getAmb().x << " " << mesh[i]->getAmb().y << " " << mesh[i]->getAmb().z << endl;
 		cout << mesh[i]->getDif().x << " " << mesh[i]->getDif().y << " " << mesh[i]->getDif().z << endl;
 		cout << mesh[i]->getSpe().x << " " << mesh[i]->getSpe().y << " " << mesh[i]->getSpe().z << endl;

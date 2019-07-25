@@ -1,5 +1,8 @@
 #include "Scene.h"
 
+//object loader 
+#include "objloaderIndex.h"
+
 Scene::Scene() {
 	file = "";
 	totalNumberOfObjects = 0;
@@ -120,6 +123,18 @@ void Scene::ReadSceneFile(string file) {
 			newmesh->setFile(filename);
 			//const char * file2 = filename.c_str(); //NOTE: don't convert before everything. Do it last!
 			//newmesh->setFile(file2); //NOTE: don't convert before everything. Do it last!
+
+			std::vector<int> indices;
+			std::vector<glm::vec3> vertices;
+			std::vector<glm::vec3> normals;
+			std::vector<glm::vec2> UVs;
+
+			loadOBJ(newmesh->getFile(), indices, vertices, normals, UVs);
+
+			newmesh->setIndices(indices);
+			newmesh->setVertices(vertices);
+			newmesh->setNormals(normals);
+			newmesh->setUVs(UVs);
 
 			input >> attribute >> meshposx >> meshposy >> meshposz;
 			glm::vec3 amb = glm::vec3(meshposx, meshposy, meshposz);
