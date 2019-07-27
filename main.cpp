@@ -251,10 +251,23 @@ int main() {
 	for (int i = 0; i < mesh.size(); i++) {
 		cout << "mesh info" << endl;
 		cout << mesh[i]->getFile() << endl;
-		cout << mesh[i]->getIndices()[0] << endl;
-		cout << mesh[i]->getVertices()[0].x << endl;
-		cout << mesh[i]->getNormals()[0].x << endl;
-		cout << mesh[i]->getUVs()[0].x << endl;
+		cout << "Indices:" << endl;
+		for (int j = 0; j < mesh[i]->getIndices().size(); j++) {
+			cout << mesh[i]->getIndices()[j] << endl;
+		}
+		cout << "Vertices:" << endl;
+		for (int j = 0; j < mesh[i]->getVertices().size(); j++) {
+			cout << mesh[i]->getVertices()[j].x << ", " << mesh[i]->getVertices()[j].y << ", " << mesh[i]->getVertices()[j].z << endl;
+		}
+		cout << "Normals:" << endl;
+		for (int j = 0; j < mesh[i]->getNormals().size(); j++) {
+			cout << mesh[i]->getNormals()[j].x << ", " << mesh[i]->getNormals()[j].y << ", " << mesh[i]->getNormals()[j].z << endl;
+		}
+		cout << "UVs:" << endl;
+		for (int j = 0; j < mesh[i]->getUVs().size(); j++) {
+			cout << mesh[i]->getUVs()[j].x << ", " << mesh[i]->getUVs()[j].y << endl;
+		}
+		cout << "more mesh info" << endl;
 		cout << mesh[i]->getAmb().x << " " << mesh[i]->getAmb().y << " " << mesh[i]->getAmb().z << endl;
 		cout << mesh[i]->getDif().x << " " << mesh[i]->getDif().y << " " << mesh[i]->getDif().z << endl;
 		cout << mesh[i]->getSpe().x << " " << mesh[i]->getSpe().y << " " << mesh[i]->getSpe().z << endl;

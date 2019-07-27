@@ -41,6 +41,12 @@ public:
 	void setUVs(std::vector<glm::vec2> UVs);
 	std::vector<glm::vec2> getUVs();
 
+	bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &tNear, int index, glm::vec2 UV);
+
+	bool rayTriangleIntersect(const glm::vec3 &rayorig, const glm::vec3 &raydir,
+		const glm::vec3 &v0, const glm::vec3 &v1, const glm::vec3 &v2,
+		float &t, float &u, float &v);
+
 private:
 	string file; //where filename.obj is the OBJ file containing the mesh
 	//const char * file; //where filename.obj is the OBJ file containing the mesh
