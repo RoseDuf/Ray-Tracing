@@ -45,25 +45,25 @@ glm::vec3 ComputePointLight(Light &light, glm::vec3 &norm, glm::vec3 &fragment_p
 	return color;
 }
 
-//trace but for mesh, unfinished
-//bool traceMesh(glm::vec3 &orig, glm::vec3 &dir,
-//	vector<shared_ptr<Mesh>> &meshes,
-//	float &tNear, int &index, glm::vec2 &uv, shared_ptr<Mesh> &hitObject){
-//
-//	for (int k = 0; k < meshes.size(); k++) {
-//		float tNearTriangle = INFINITY;
-//		int indexTriangle;
-//		glm::vec2 uvTriangle;
-//		if (meshes[k]->intersect(orig, dir, tNearTriangle, indexTriangle, uvTriangle) && tNearTriangle < tNear) {
-//			hitObject = meshes[k];
-//			tNear = tNearTriangle;
-//			index = indexTriangle;
-//			uv = uvTriangle;
-//		}
-//	}
-//
-//	return (hitObject != nullptr);
-//}
+//trace but for mesh
+bool traceMesh(glm::vec3 &rayorig, glm::vec3 &raydir,
+	vector<shared_ptr<Mesh>> &meshes,
+	float &tNear, int &index, glm::vec2 &uv, shared_ptr<Mesh> &hitObject){
+
+	for (int k = 0; k < meshes.size(); k++) {
+		float tNearTriangle = INFINITY;
+		int indexTriangle = NULL;
+		glm::vec2 uvTriangle;
+		if (meshes[k]->intersect(rayorig, raydir, tNearTriangle, indexTriangle, uvTriangle) && tNearTriangle < tNear) {
+			hitObject = meshes[k];
+			tNear = tNearTriangle;
+			index = indexTriangle;
+			uv = uvTriangle;
+		}
+	}
+
+	return (hitObject != nullptr);
+}
 
 //assigns the minimum point of intersection
 bool trace(glm::vec3 origin, glm::vec3 direction, vector<shared_ptr<Object>> objects, float &tmin, shared_ptr<Object> &object) {
@@ -119,18 +119,18 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 	}
 
 	//attempted raycasting of the mesh, unfortunalety it is unfinished
-	/*else if (traceMesh(rayorig, raydir, meshes, tmin, index, uv, mesh)) {
+	else if (traceMesh(rayorig, raydir, meshes, tmin, index, uv, mesh)) {
 		glm::vec3 phit = rayorig + raydir * tmin;
 		glm::vec3 nhit = glm::normalize(object->getNormal(phit));
 		glm::vec2 hitTexCoordinates;
-		mesh->getSurfaceProperties(phit, raydir, index, uv, nhit, hitTexCoordinates);
+		
 		float NdotView = std::max(0.f, glm::dot(-raydir, nhit));
 		const int M = 10;
 		float checker = (fmod(hitTexCoordinates.x * M, 1.0) > 0.5) ^ (fmod(hitTexCoordinates.y * M, 1.0) < 0.5);
 		float c = 0.3 * (1 - checker) + 0.7 * checker;
 
 		surfaceColor = glm::vec3(c * NdotView);
-	}*/
+	}
 
 	//resulting color
 	return surfaceColor;
@@ -217,9 +217,13 @@ int main() {
 	for (int i = 0; i < plane.size(); i++) {
 		objects.push_back(plane[i]);
 	}
+	for (int i = 0; i < mesh.size(); i++) {
+		objects.push_back(mesh[i]);
+	}
+
 
 	//RENDER SCENE
-	//render(objects, mesh, light, cam);
+	render(objects, mesh, light, cam);
 
 	//To show that scene was properly rendered with the right values
 	cout << "number of objects" << endl;
@@ -247,7 +251,7 @@ int main() {
 		cout << objects[i]->getDif().x << " " << objects[i]->getDif().y << " " << objects[i]->getDif().z << endl;
 		cout << objects[i]->getSpe().x << " " << objects[i]->getSpe().y << " " << objects[i]->getSpe().z << endl;
 		cout << objects[i]->getShi() << endl;
-	}
+	}/*
 	for (int i = 0; i < mesh.size(); i++) {
 		cout << "mesh info" << endl;
 		cout << mesh[i]->getFile() << endl;
@@ -279,6 +283,6 @@ int main() {
 		cout << light[i].getDif().x << " " << light[i].getDif().y << " " << light[i].getDif().z << endl;
 		cout << light[i].getSpe().x << " " << light[i].getSpe().y << " " << light[i].getSpe().z << endl;
 	}
-	
+	*/
 	return 0;
 }
