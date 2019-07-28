@@ -205,7 +205,7 @@ int main() {
 	cam = scene->getCamera();
 	plane = scene->getPlane();
 	sphere = scene->getSphere();
-	mesh = scene->getMesh(); //unfinished
+	mesh = scene->getMesh(); 
 	light = scene->getLight();
 
 	//create an object vector with all the objects of the scene (spheres and planes)
@@ -223,7 +223,7 @@ int main() {
 
 
 	//RENDER SCENE
-	render(objects, mesh, light, cam);
+	//render(objects, mesh, light, cam);
 
 	//To show that scene was properly rendered with the right values
 	cout << "number of objects" << endl;
@@ -251,8 +251,8 @@ int main() {
 		cout << objects[i]->getDif().x << " " << objects[i]->getDif().y << " " << objects[i]->getDif().z << endl;
 		cout << objects[i]->getSpe().x << " " << objects[i]->getSpe().y << " " << objects[i]->getSpe().z << endl;
 		cout << objects[i]->getShi() << endl;
-	}/*
-	for (int i = 0; i < mesh.size(); i++) {
+	}
+	for (int i = 0; i < (objects.size() - (sphere.size() + plane.size())); i++) {
 		cout << "mesh info" << endl;
 		cout << mesh[i]->getFile() << endl;
 		cout << "Indices:" << endl;
@@ -272,10 +272,10 @@ int main() {
 			cout << mesh[i]->getUVs()[j].x << ", " << mesh[i]->getUVs()[j].y << endl;
 		}
 		cout << "more mesh info" << endl;
-		cout << mesh[i]->getAmb().x << " " << mesh[i]->getAmb().y << " " << mesh[i]->getAmb().z << endl;
-		cout << mesh[i]->getDif().x << " " << mesh[i]->getDif().y << " " << mesh[i]->getDif().z << endl;
-		cout << mesh[i]->getSpe().x << " " << mesh[i]->getSpe().y << " " << mesh[i]->getSpe().z << endl;
-		cout << mesh[i]->getShi() << endl;
+		cout << objects[i+ (sphere.size() + plane.size())]->getAmb().x << " " << objects[i + (sphere.size() + plane.size())]->getAmb().y << " " << objects[i + (sphere.size() + plane.size())]->getAmb().z << endl;
+		cout << objects[i+ (sphere.size() + plane.size())]->getDif().x << " " << objects[i + (sphere.size() + plane.size())]->getDif().y << " " << objects[i + (sphere.size() + plane.size())]->getDif().z << endl;
+		cout << objects[i+ (sphere.size() + plane.size())]->getSpe().x << " " << objects[i + (sphere.size() + plane.size())]->getSpe().y << " " << objects[i + (sphere.size() + plane.size())]->getSpe().z << endl;
+		cout << objects[i+ (sphere.size() + plane.size())]->getShi() << endl;
 	}
 	for (int i = 0; i < light.size(); i++) {
 		cout << "light info" << endl;
@@ -283,6 +283,6 @@ int main() {
 		cout << light[i].getDif().x << " " << light[i].getDif().y << " " << light[i].getDif().z << endl;
 		cout << light[i].getSpe().x << " " << light[i].getSpe().y << " " << light[i].getSpe().z << endl;
 	}
-	*/
+	
 	return 0;
 }

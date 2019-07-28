@@ -4,6 +4,7 @@
 
 Mesh::Mesh() {
 	file = "";
+	indices = {};
 	vertices = {};
 	normals = {};
 	UVs = {};
@@ -70,10 +71,10 @@ bool Mesh::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t
 		float t = INFINITY;
 		float u;
 		float v;
-		if (rayTriangleIntersect(rayorig, raydir, v0, v1, v2, t, u, v) && t < tNear) {
+		if (rayTriangleIntersect(rayorig, raydir, v0, v1, v2, t) && t < tNear) {
 			tNear = t;
-			UV.x = u;
-			UV.y = v;
+			//UV.x = u;
+			//UV.y = v;
 			index = i;
 			isect = true;
 		}
@@ -83,41 +84,100 @@ bool Mesh::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t
 	return isect;
 }
 
-
-//Möller-Trumbore algorithm
-bool Mesh::rayTriangleIntersect(const glm::vec3 &rayorig, const glm::vec3 &raydir,
+bool Mesh::rayTriangleIntersect(
+	const glm::vec3 &orig, const glm::vec3 &dir,
 	const glm::vec3 &v0, const glm::vec3 &v1, const glm::vec3 &v2,
-	float &t, float &u, float &v) {
-	
-	// compute plane's (triangle's) normal
+	float &t) {
+
+	// compute plane's normal
 	glm::vec3 v0v1 = v1 - v0;
 	glm::vec3 v0v2 = v2 - v0;
-	glm::vec3 normalVec = glm::cross(raydir, v0v2); //check if cross is in right order if errors
-	float determinant = glm::dot(v0v1, normalVec);
+	// no need to normalize
+	glm::vec3 N = glm::cross(v0v1, v0v2); // N 
+	float area2 = N.length();
 
-	// if the determinant is negative the triangle is backfacing
-	// if the determinant is close to 0, the ray misses the triangle
-	if (determinant < 1e-6) return false;
+	// Step 1: finding P
 
-	// ray and triangle are parallel if deterteminant is close to 0 
-	if (fabs(determinant) < 1e-6) 
-		return false;
+	// check if ray and plane are parallel ?
+	float NdotRayDirection = glm::dot(N, dir);
+	//check if normal is perpendicular to ray
+	if (fabs(NdotRayDirection) < 1e-6) // almost 0 
+		return false; // they are parallel so they don't intersect ! 
 
-	float invDet = 1 / determinant;
+	// compute d parameter using equation 2
+	float d = glm::dot(N, v0);
 
-	glm::vec3 tvec = rayorig - v0; // t is distance from the ray origin O to P
-	u = glm::dot(tvec, normalVec) * invDet;
+	// compute t (equation 3)
+	t = (glm::dot(N, orig) + d) / NdotRayDirection;
 
-	if (u < 0 || u > 1) 
-		return false;
+	// check if the triangle is in behind the ray
+	if (t < 0) 
+		return false; // the triangle is behind 
 
-	glm::vec3 qvec = glm::cross(tvec, v0v1); //check if cross is in right order if errors
-	v = glm::dot(raydir, qvec) * invDet; 
+	// compute the intersection point using equation 1
+	glm::vec3 P = orig + t * dir;
 
-	if (v < 0 || u + v > 1)
-		return false;
+	// Step 2: inside-outside test
+	glm::vec3 C; // vector perpendicular to triangle's plane 
 
-	t = glm::dot(v0v2, qvec) * invDet; 
+	// edge 0
+	glm::vec3 edge0 = v1 - v0;
+	glm::vec3 vp0 = P - v0;
+	C = glm::cross(edge0, vp0);
+	if (glm::dot(N, C) < 0) 
+		return false; // P is on the right side 
 
-	return true;
+	// edge 1
+	glm::vec3 edge1 = v2 - v1;
+	glm::vec3 vp1 = P - v1;
+	C = glm::cross(edge1, vp1);
+	if (glm::dot(N, C) < 0)  
+		return false; // P is on the right side 
+
+	// edge 2
+	glm::vec3 edge2 = v0 - v2;
+	glm::vec3 vp2 = P - v2;
+	C = glm::cross(edge2, vp2);
+	if (glm::dot(N, C) < 0) 
+		return false; // P is on the right side; 
+
+	return true; // this ray hits the triangle 
 }
+
+////Möller-Trumbore algorithm
+//bool Mesh::rayTriangleIntersect(const glm::vec3 &rayorig, const glm::vec3 &raydir,
+//	const glm::vec3 &v0, const glm::vec3 &v1, const glm::vec3 &v2,
+//	float &t, float &u, float &v) {
+//	
+//	// compute plane's (triangle's) normal
+//	glm::vec3 v0v1 = v1 - v0;
+//	glm::vec3 v0v2 = v2 - v0;
+//	glm::vec3 normalVec = glm::cross(raydir, v0v2); //check if cross is in right order if errors
+//	float determinant = glm::dot(v0v1, normalVec);
+//
+//	// if the determinant is negative the triangle is backfacing
+//	// if the determinant is close to 0, the ray misses the triangle
+//	if (determinant < 1e-6) return false;
+//
+//	// ray and triangle are parallel if deterteminant is close to 0 
+//	if (fabs(determinant) < 1e-6) 
+//		return false;
+//
+//	float invDet = 1 / determinant;
+//
+//	glm::vec3 tvec = rayorig - v0; // t is distance from the ray origin O to P
+//	u = glm::dot(tvec, normalVec) * invDet;
+//
+//	if (u < 0 || u > 1) 
+//		return false;
+//
+//	glm::vec3 qvec = glm::cross(tvec, v0v1); //check if cross is in right order if errors
+//	v = glm::dot(raydir, qvec) * invDet; 
+//
+//	if (v < 0 || u + v > 1)
+//		return false;
+//
+//	t = glm::dot(v0v2, qvec) * invDet; 
+//
+//	return true;
+//}
