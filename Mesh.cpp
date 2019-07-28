@@ -24,6 +24,13 @@ Mesh::Mesh(string _file,
 
 Mesh::~Mesh() {}
 
+glm::vec3 Mesh::getNormal() {
+	return nor;
+}
+void Mesh::setNormal(glm::vec3 _nor) {
+	nor = _nor;
+}
+
 const char * Mesh::getFile() {
 	return file.c_str(); //need to do conversion inside this function or else pointer will lose information on the string
 	//very weird
@@ -71,10 +78,10 @@ bool Mesh::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t
 		float t = INFINITY;
 		float u;
 		float v;
-		if (rayTriangleIntersect(rayorig, raydir, v0, v1, v2, t) && t < tNear) {
+		if (rayTriangleIntersect(rayorig, raydir, v0, v1, v2, t, u, v) && t < tNear) {
 			tNear = t;
-			//UV.x = u;
-			//UV.y = v;
+			UV.x = u;
+			UV.y = v;
 			index = i;
 			isect = true;
 		}
@@ -87,14 +94,15 @@ bool Mesh::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t
 bool Mesh::rayTriangleIntersect(
 	const glm::vec3 &orig, const glm::vec3 &dir,
 	const glm::vec3 &v0, const glm::vec3 &v1, const glm::vec3 &v2,
-	float &t) {
+	float &t, float &u, float &v) {
 
 	// compute plane's normal
 	glm::vec3 v0v1 = v1 - v0;
 	glm::vec3 v0v2 = v2 - v0;
 	// no need to normalize
 	glm::vec3 N = glm::cross(v0v1, v0v2); // N 
-	float area2 = N.length();
+	this->setNormal(N);
+	float denom = glm::dot(N, N);
 
 	// Step 1: finding P
 
@@ -140,6 +148,9 @@ bool Mesh::rayTriangleIntersect(
 	C = glm::cross(edge2, vp2);
 	if (glm::dot(N, C) < 0) 
 		return false; // P is on the right side; 
+
+	u /= denom;
+	v /= denom;
 
 	return true; // this ray hits the triangle 
 }

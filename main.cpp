@@ -46,8 +46,8 @@ glm::vec3 ComputePointLight(Light &light, glm::vec3 &norm, glm::vec3 &fragment_p
 }
 
 //trace but for mesh
-bool traceMesh(glm::vec3 &rayorig, glm::vec3 &raydir,
-	vector<shared_ptr<Mesh>> &meshes,
+bool traceMesh(glm::vec3 rayorig, glm::vec3 raydir,
+	vector<shared_ptr<Mesh>> meshes,
 	float &tNear, int &index, glm::vec2 &uv, shared_ptr<Mesh> &hitObject){
 
 	for (int k = 0; k < meshes.size(); k++) {
@@ -66,7 +66,8 @@ bool traceMesh(glm::vec3 &rayorig, glm::vec3 &raydir,
 }
 
 //assigns the minimum point of intersection
-bool trace(glm::vec3 origin, glm::vec3 direction, vector<shared_ptr<Object>> objects, float &tmin, shared_ptr<Object> &object) {
+bool trace(glm::vec3 origin, glm::vec3 direction, 
+	vector<shared_ptr<Object>> objects, float &tmin, shared_ptr<Object> &object) {
 	tmin = INFINITY;
 	for (int i = 0; i < objects.size(); i++) {
 		float t = INFINITY;
@@ -120,16 +121,26 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 
 	//attempted raycasting of the mesh, unfortunalety it is unfinished
 	else if (traceMesh(rayorig, raydir, meshes, tmin, index, uv, mesh)) {
-		glm::vec3 phit = rayorig + raydir * tmin;
-		glm::vec3 nhit = glm::normalize(object->getNormal(phit));
-		glm::vec2 hitTexCoordinates;
-		
-		float NdotView = std::max(0.f, glm::dot(-raydir, nhit));
-		const int M = 10;
-		float checker = (fmod(hitTexCoordinates.x * M, 1.0) > 0.5) ^ (fmod(hitTexCoordinates.y * M, 1.0) < 0.5);
-		float c = 0.3 * (1 - checker) + 0.7 * checker;
+		for (int i = 0; i < lights.size(); i++) {
+			glm::vec3 phit = rayorig + raydir * tmin;
+			glm::vec3 nhit = glm::normalize(mesh->getNormal());
+			glm::vec3 view_direction = glm::normalize(cam->getPosition() - phit); //camera view direction
+			glm::vec3 lightDirection = glm::normalize(lights[i].getPosition() - phit); //light direction vector
 
-		surfaceColor = glm::vec3(c * NdotView);
+																					   //computing shadows (similar calculation of trace)
+			float tshadow = INFINITY;
+			float bias = 1e-8; //add bias
+			shared_ptr<Mesh> meshShadow = nullptr;
+
+			//if object is not in shadow, compute surface color normally using Phong
+			if ((!traceMesh(phit + nhit * bias, -lightDirection, meshes, tshadow, index, uv, meshShadow)) || (mesh == meshShadow)) {
+
+				surfaceColor += ComputePointLight(lights[i], nhit, phit, view_direction, lightDirection, object);
+
+			}
+			else //just the ambient color of an object if object IS in shadow
+				surfaceColor += object->getAmb();
+		}
 	}
 
 	//resulting color
