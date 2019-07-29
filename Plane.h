@@ -19,7 +19,7 @@ public:
 	Plane(glm::vec3 nor);
 	~Plane();
 
-	glm::vec3 getNormal(glm::vec3 phit);
+	glm::vec3 getNormal(glm::vec3 phit, int triIndex);
 	void setNormal(glm::vec3 nor);
 
 	bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t, int &index);

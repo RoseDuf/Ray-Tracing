@@ -35,7 +35,7 @@ public:
 	float getShi();
 	void setShi(float shi);
 
-	virtual glm::vec3 getNormal(glm::vec3 phit) {return glm::vec3(0);}
+	virtual glm::vec3 getNormal(glm::vec3 phit, int triIndex) {return glm::vec3(0);}
 
 	virtual bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t, int &index) { return false; }
 

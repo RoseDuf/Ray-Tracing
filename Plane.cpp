@@ -9,7 +9,7 @@ Plane::Plane(glm::vec3 _nor) {
 Plane::~Plane() {}
 
 //plane normal given
-glm::vec3 Plane::getNormal(glm::vec3 phit) {
+glm::vec3 Plane::getNormal(glm::vec3 phit, int triIndex) {
 	return nor;
 }
 void Plane::setNormal(glm::vec3 _nor) {

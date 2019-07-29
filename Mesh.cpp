@@ -24,8 +24,16 @@ Mesh::Mesh(string _file,
 
 Mesh::~Mesh() {}
 
-glm::vec3 Mesh::getNormal() {
-	return nor;
+glm::vec3 Mesh::getNormal(glm::vec3 &, int triIndex)
+{
+
+	// face normals
+	glm::vec3 &v0 = vertices[indices[triIndex * 3]];
+	glm::vec3 &v1 = vertices[indices[triIndex * 3 + 1]];
+	glm::vec3 &v2 = vertices[indices[triIndex * 3 + 2]];
+	glm::vec3 hitNormal = glm::cross(v1 - v0, v2 - v0);
+
+	return glm::normalize(hitNormal);
 }
 void Mesh::setNormal(glm::vec3 _nor) {
 	nor = _nor;
@@ -73,10 +81,11 @@ bool Mesh::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t
 	//calculating the intersection of a specific triangle
 	int j = 0;
 	bool intersect = false;
-	for (uint32_t i = 0; i < indices.size()/3; ++i) {
-		const glm::vec3 &v0 = vertices[indices[j]];
-		const glm::vec3 &v1 = vertices[indices[j + 1]];
-		const glm::vec3 &v2 = vertices[indices[j + 2]];
+	int numTris = this->indices.size() / 3;
+	for (uint32_t i = 0; i < numTris; ++i) {
+		const glm::vec3 &v0 = this->vertices[this->indices[j]];
+		const glm::vec3 &v1 = this->vertices[this->indices[j + 1]];
+		const glm::vec3 &v2 = this->vertices[this->indices[j + 2]];
 		float t = INFINITY;
 		float u;
 		float v;
@@ -167,11 +176,11 @@ bool Mesh::rayTriangleIntersect(const glm::vec3 &rayorig, const glm::vec3 &raydi
 	// compute plane's (triangle's) normal
 	glm::vec3 v0v1 = v1 - v0;
 	glm::vec3 v0v2 = v2 - v0;
-	glm::vec3 normalVec = glm::cross(raydir, v0v2); //check if cross is in right order if errors
-	float determinant = glm::dot(v0v1, normalVec);
+	glm::vec3 perpVec = glm::cross(raydir, v0v2); //check if cross is in right order if errors
+	float determinant = glm::dot(v0v1, perpVec);
 
-	glm::vec3 N = glm::cross(v0v1, v0v2); // N 
-	this->setNormal(N);
+	//glm::vec3 N = glm::cross(v0v1, v0v2); // N 
+	//this->setNormal(N);
 
 	// if the determinant is negative the triangle is backfacing
 	// if the determinant is close to 0, the ray misses the triangle
@@ -179,13 +188,15 @@ bool Mesh::rayTriangleIntersect(const glm::vec3 &rayorig, const glm::vec3 &raydi
 		return false;
 
 	// ray and triangle are parallel if deterteminant is close to 0 
-	if (fabs(determinant) < 1e-8) 
+	/*if (fabs(determinant) < 1e-8) 
+		return false;*/
+	if (glm::dot(raydir, normalize(glm::cross(v0v1, v0v2))) > 0)
 		return false;
 
 	float invDet = 1 / determinant;
 
 	glm::vec3 tvec = rayorig - v0; // t is distance from the ray origin O to P
-	u = glm::dot(tvec, normalVec) * invDet;
+	u = glm::dot(tvec, perpVec) * invDet;
 
 	if (u < 0 || u > 1) 
 		return false;

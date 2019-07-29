@@ -26,7 +26,7 @@ public:
 		std::vector<glm::vec2> UVs);
 	~Mesh();
 
-	glm::vec3 getNormal();
+	glm::vec3 getNormal(glm::vec3 &, int triIndex);
 	void setNormal(glm::vec3 _nor);
 
 	const char * getFile();

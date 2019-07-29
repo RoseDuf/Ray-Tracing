@@ -45,26 +45,6 @@ glm::vec3 ComputePointLight(Light &light, glm::vec3 &norm, glm::vec3 &fragment_p
 	return color;
 }
 
-//trace but for mesh
-//bool traceMesh(glm::vec3 rayorig, glm::vec3 raydir,
-//	vector<shared_ptr<Mesh>> meshes,
-//	float &tNear, int &index, glm::vec2 &uv, shared_ptr<Mesh> &hitObject){
-//
-//	for (int k = 0; k < meshes.size(); k++) {
-//		float tNearTriangle = INFINITY;
-//		int indexTriangle = NULL;
-//		glm::vec2 uvTriangle;
-//		if (meshes[k]->intersect(rayorig, raydir, tNearTriangle, indexTriangle, uvTriangle) && tNearTriangle < tNear) {
-//			hitObject = meshes[k];
-//			tNear = tNearTriangle;
-//			index = indexTriangle;
-//			uv = uvTriangle;
-//		}
-//	}
-//
-//	return (hitObject != nullptr);
-//}
-
 //assigns the minimum point of intersection
 bool trace(glm::vec3 origin, glm::vec3 direction, 
 	vector<shared_ptr<Object>> objects, float &tmin, int &index, shared_ptr<Object> &object) {
@@ -87,7 +67,7 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 	vector<Light> &lights, Camera *cam) {
 	
 	glm::vec3 surfaceColor = glm::vec3(0);
-	shared_ptr<Object> object = nullptr; //target object
+	shared_ptr<Object> hitObject = nullptr; //target object
 	//shared_ptr<Mesh> mesh = nullptr; //target mesh
 	//glm::vec2 uv;
 	int index = 0;
@@ -95,12 +75,12 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 	float tmin; //the closest point of intersection from ray origin to object
 
 	//computing the colors produced by the ray on an object (with light)
-	if (trace(rayorig, raydir, objects, tmin, index, object)) {
+	if (trace(rayorig, raydir, objects, tmin, index, hitObject)) {
 		//itterate through all the lights
 		for (int i = 0; i < lights.size(); i++) {
 
 			glm::vec3 phit = rayorig + raydir * tmin; //point hit in parametric form (p0 +dt)
-			glm::vec3 nhit = glm::normalize(object->getNormal(phit)); //normal of the point hit (normal calculation is different between planes and spheres)
+			glm::vec3 nhit = glm::normalize(hitObject->getNormal(phit, index)); //normal of the point hit (normal calculation is different between planes and spheres)
 			glm::vec3 view_direction = glm::normalize(cam->getPosition() - phit); //camera view direction
 			glm::vec3 lightDirection = glm::normalize(lights[i].getPosition() - phit); //light direction vector
 			
@@ -110,39 +90,15 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 			shared_ptr<Object> objectShadow = nullptr;
 			
 			//if object is not in shadow, compute surface color normally using Phong
-			if ((!trace(phit + nhit * bias, -lightDirection, objects, tshadow, index, objectShadow)) || (object == objectShadow)) {
+			if ((!trace(phit + nhit * bias, -lightDirection, objects, tshadow, index, objectShadow)) || (hitObject == objectShadow)) {
 				
-				surfaceColor += ComputePointLight(lights[i], nhit, phit, view_direction, lightDirection, object);
+				surfaceColor += ComputePointLight(lights[i], nhit, phit, view_direction, lightDirection, hitObject);
 
 			}
 			else //just the ambient color of an object if object IS in shadow
-				surfaceColor += object->getAmb();
+				surfaceColor += hitObject->getAmb();
 		}
 	}
-
-	//attempted raycasting of the mesh, unfortunalety it is unfinished
-	//else if (traceMesh(rayorig, raydir, meshes, tmin, index, uv, mesh)) {
-	//	for (int i = 0; i < lights.size(); i++) {
-	//		glm::vec3 phit = rayorig + raydir * tmin;
-	//		glm::vec3 nhit = glm::normalize(mesh->getNormal());
-	//		glm::vec3 view_direction = glm::normalize(cam->getPosition() - phit); //camera view direction
-	//		glm::vec3 lightDirection = glm::normalize(lights[i].getPosition() - phit); //light direction vector
-
-	//																				   //computing shadows (similar calculation of trace)
-	//		float tshadow = INFINITY;
-	//		float bias = 1e-8; //add bias
-	//		shared_ptr<Mesh> meshShadow = nullptr;
-
-	//		//if object is not in shadow, compute surface color normally using Phong
-	//		if ((!traceMesh(phit + nhit * bias, -lightDirection, meshes, tshadow, index, uv, meshShadow)) || (mesh == meshShadow)) {
-
-	//			surfaceColor += ComputePointLight(lights[i], nhit, phit, view_direction, lightDirection, object);
-
-	//		}
-	//		else //just the ambient color of an object if object IS in shadow
-	//			surfaceColor += object->getAmb();
-	//	}
-	//}
 
 	//resulting color
 	return surfaceColor;
@@ -249,7 +205,7 @@ int main() {
 	for (int i = sphere.size(); i < (sphere.size()+plane.size()); i++) {
 		cout << "plane info" << endl;
 		cout << objects[i]->getPosition().x << " " << objects[i]->getPosition().y << " " << objects[i]->getPosition().z << endl;
-		cout << objects[i]->getNormal(glm::vec3(1)).x << " " << objects[i]->getNormal(glm::vec3(1)).y << " " << objects[i]->getNormal(glm::vec3(1)).z << endl;
+		//cout << objects[i]->getNormal(glm::vec3(1)).x << " " << objects[i]->getNormal(glm::vec3(1)).y << " " << objects[i]->getNormal(glm::vec3(1)).z << endl;
 		cout << objects[i]->getAmb().x << " " << objects[i]->getAmb().y << " " << objects[i]->getAmb().z << endl;
 		cout << objects[i]->getDif().x << " " << objects[i]->getDif().y << " " << objects[i]->getDif().z << endl;
 		cout << objects[i]->getSpe().x << " " << objects[i]->getSpe().y << " " << objects[i]->getSpe().z << endl;

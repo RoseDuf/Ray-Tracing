@@ -23,7 +23,7 @@ public:
 	float getRadius();
 	void setRadius(float rad);
 
-	glm::vec3 getNormal(glm::vec3 phit);
+	glm::vec3 getNormal(glm::vec3 phit, int triIndex);
 
 	bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t, int &index);
 

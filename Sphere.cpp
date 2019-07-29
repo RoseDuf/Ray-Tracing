@@ -17,7 +17,7 @@ void Sphere::setRadius(float _rad) {
 }
 
 //normal of circle needs a little calculation
-glm::vec3 Sphere::getNormal(glm::vec3 phit) {
+glm::vec3 Sphere::getNormal(glm::vec3 phit, int triIndex) {
 	return glm::normalize((phit - this->getPosition()) / rad);
 }
 
