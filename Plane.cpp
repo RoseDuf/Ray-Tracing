@@ -17,7 +17,7 @@ void Plane::setNormal(glm::vec3 _nor) {
 }
 
 //compute if there is intersection with the plane
-bool Plane::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t) {
+bool Plane::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t, int &index) {
 
 	float denom = glm::dot(this->nor, raydir);
 	if (abs(denom) > 1e-6) {

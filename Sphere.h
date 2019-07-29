@@ -25,7 +25,7 @@ public:
 
 	glm::vec3 getNormal(glm::vec3 phit);
 
-	bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t);
+	bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t, int &index);
 
 private:
 	float rad; //where r is the radius of the sphere

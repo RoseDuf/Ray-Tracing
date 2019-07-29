@@ -37,7 +37,7 @@ public:
 
 	virtual glm::vec3 getNormal(glm::vec3 phit) {return glm::vec3(0);}
 
-	virtual bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t) { return false; }
+	virtual bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t, int &index) { return false; }
 
 private:
 	glm::vec3 nor;

@@ -22,7 +22,7 @@ public:
 	glm::vec3 getNormal(glm::vec3 phit);
 	void setNormal(glm::vec3 nor);
 
-	bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t);
+	bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t, int &index);
 	
 private:
 	glm::vec3 nor; 

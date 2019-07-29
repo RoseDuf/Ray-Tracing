@@ -46,34 +46,36 @@ glm::vec3 ComputePointLight(Light &light, glm::vec3 &norm, glm::vec3 &fragment_p
 }
 
 //trace but for mesh
-bool traceMesh(glm::vec3 rayorig, glm::vec3 raydir,
-	vector<shared_ptr<Mesh>> meshes,
-	float &tNear, int &index, glm::vec2 &uv, shared_ptr<Mesh> &hitObject){
-
-	for (int k = 0; k < meshes.size(); k++) {
-		float tNearTriangle = INFINITY;
-		int indexTriangle = NULL;
-		glm::vec2 uvTriangle;
-		if (meshes[k]->intersect(rayorig, raydir, tNearTriangle, indexTriangle, uvTriangle) && tNearTriangle < tNear) {
-			hitObject = meshes[k];
-			tNear = tNearTriangle;
-			index = indexTriangle;
-			uv = uvTriangle;
-		}
-	}
-
-	return (hitObject != nullptr);
-}
+//bool traceMesh(glm::vec3 rayorig, glm::vec3 raydir,
+//	vector<shared_ptr<Mesh>> meshes,
+//	float &tNear, int &index, glm::vec2 &uv, shared_ptr<Mesh> &hitObject){
+//
+//	for (int k = 0; k < meshes.size(); k++) {
+//		float tNearTriangle = INFINITY;
+//		int indexTriangle = NULL;
+//		glm::vec2 uvTriangle;
+//		if (meshes[k]->intersect(rayorig, raydir, tNearTriangle, indexTriangle, uvTriangle) && tNearTriangle < tNear) {
+//			hitObject = meshes[k];
+//			tNear = tNearTriangle;
+//			index = indexTriangle;
+//			uv = uvTriangle;
+//		}
+//	}
+//
+//	return (hitObject != nullptr);
+//}
 
 //assigns the minimum point of intersection
 bool trace(glm::vec3 origin, glm::vec3 direction, 
-	vector<shared_ptr<Object>> objects, float &tmin, shared_ptr<Object> &object) {
+	vector<shared_ptr<Object>> objects, float &tmin, int &index, shared_ptr<Object> &object) {
 	tmin = INFINITY;
 	for (int i = 0; i < objects.size(); i++) {
 		float t = INFINITY;
-		if (objects[i]->intersect(origin, direction, t) && t<tmin) {
+		int indexTriangle;
+		if (objects[i]->intersect(origin, direction, t, indexTriangle) && t<tmin) {
 			object = objects[i];
 			tmin = t;
+			index = indexTriangle;
 		}
 	}
 	return (object != nullptr);
@@ -81,20 +83,19 @@ bool trace(glm::vec3 origin, glm::vec3 direction,
 
 //method that computes color of objects depending on whether or not there is intersection with ray
 glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir, 
-	vector<shared_ptr<Object>> objects, 
-	vector<shared_ptr<Mesh>> meshes,
+	vector<shared_ptr<Object>> objects,
 	vector<Light> &lights, Camera *cam) {
 	
 	glm::vec3 surfaceColor = glm::vec3(0);
 	shared_ptr<Object> object = nullptr; //target object
-	shared_ptr<Mesh> mesh = nullptr; //target mesh
-	glm::vec2 uv;
+	//shared_ptr<Mesh> mesh = nullptr; //target mesh
+	//glm::vec2 uv;
 	int index = 0;
 
 	float tmin; //the closest point of intersection from ray origin to object
 
 	//computing the colors produced by the ray on an object (with light)
-	if (trace(rayorig, raydir, objects, tmin, object)) {
+	if (trace(rayorig, raydir, objects, tmin, index, object)) {
 		//itterate through all the lights
 		for (int i = 0; i < lights.size(); i++) {
 
@@ -109,7 +110,7 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 			shared_ptr<Object> objectShadow = nullptr;
 			
 			//if object is not in shadow, compute surface color normally using Phong
-			if ((!trace(phit + nhit * bias, -lightDirection, objects, tshadow, objectShadow)) || (object == objectShadow)) {
+			if ((!trace(phit + nhit * bias, -lightDirection, objects, tshadow, index, objectShadow)) || (object == objectShadow)) {
 				
 				surfaceColor += ComputePointLight(lights[i], nhit, phit, view_direction, lightDirection, object);
 
@@ -120,28 +121,28 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 	}
 
 	//attempted raycasting of the mesh, unfortunalety it is unfinished
-	else if (traceMesh(rayorig, raydir, meshes, tmin, index, uv, mesh)) {
-		for (int i = 0; i < lights.size(); i++) {
-			glm::vec3 phit = rayorig + raydir * tmin;
-			glm::vec3 nhit = glm::normalize(mesh->getNormal());
-			glm::vec3 view_direction = glm::normalize(cam->getPosition() - phit); //camera view direction
-			glm::vec3 lightDirection = glm::normalize(lights[i].getPosition() - phit); //light direction vector
+	//else if (traceMesh(rayorig, raydir, meshes, tmin, index, uv, mesh)) {
+	//	for (int i = 0; i < lights.size(); i++) {
+	//		glm::vec3 phit = rayorig + raydir * tmin;
+	//		glm::vec3 nhit = glm::normalize(mesh->getNormal());
+	//		glm::vec3 view_direction = glm::normalize(cam->getPosition() - phit); //camera view direction
+	//		glm::vec3 lightDirection = glm::normalize(lights[i].getPosition() - phit); //light direction vector
 
-																					   //computing shadows (similar calculation of trace)
-			float tshadow = INFINITY;
-			float bias = 1e-8; //add bias
-			shared_ptr<Mesh> meshShadow = nullptr;
+	//																				   //computing shadows (similar calculation of trace)
+	//		float tshadow = INFINITY;
+	//		float bias = 1e-8; //add bias
+	//		shared_ptr<Mesh> meshShadow = nullptr;
 
-			//if object is not in shadow, compute surface color normally using Phong
-			if ((!traceMesh(phit + nhit * bias, -lightDirection, meshes, tshadow, index, uv, meshShadow)) || (mesh == meshShadow)) {
+	//		//if object is not in shadow, compute surface color normally using Phong
+	//		if ((!traceMesh(phit + nhit * bias, -lightDirection, meshes, tshadow, index, uv, meshShadow)) || (mesh == meshShadow)) {
 
-				surfaceColor += ComputePointLight(lights[i], nhit, phit, view_direction, lightDirection, object);
+	//			surfaceColor += ComputePointLight(lights[i], nhit, phit, view_direction, lightDirection, object);
 
-			}
-			else //just the ambient color of an object if object IS in shadow
-				surfaceColor += object->getAmb();
-		}
-	}
+	//		}
+	//		else //just the ambient color of an object if object IS in shadow
+	//			surfaceColor += object->getAmb();
+	//	}
+	//}
 
 	//resulting color
 	return surfaceColor;
@@ -177,7 +178,7 @@ void render(vector<shared_ptr<Object>> &objects, vector<shared_ptr<Mesh>> &meshe
 
 			glm::vec3 raydir = glm::normalize(glm::vec3(xx, yy, f * -1) - camera->getPosition());
 
-			pixel_color = cast_ray(camera->getPosition(), raydir, objects, meshes, lights, camera);
+			pixel_color = cast_ray(camera->getPosition(), raydir, objects, lights, camera);
 			
 			//don't forget to clamp to avoid weird colors
 			pixel_color = glm::clamp(pixel_color, 0.0f, 1.0f);
@@ -234,7 +235,7 @@ int main() {
 
 
 	//RENDER SCENE
-	//render(objects, mesh, light, cam);
+	render(objects, mesh, light, cam);
 
 	//To show that scene was properly rendered with the right values
 	cout << "number of objects" << endl;

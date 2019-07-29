@@ -23,7 +23,7 @@ glm::vec3 Sphere::getNormal(glm::vec3 phit) {
 
 //computes if there is a point of intersection with the ray
 
-bool Sphere::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t)
+bool Sphere::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t, int &index)
 {
 	glm::vec3 o = rayorig;
 	glm::vec3 d = raydir;
