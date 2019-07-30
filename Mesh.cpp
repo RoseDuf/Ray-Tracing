@@ -24,21 +24,6 @@ Mesh::Mesh(string _file,
 
 Mesh::~Mesh() {}
 
-glm::vec3 Mesh::getNormal(glm::vec3 &, int triIndex)
-{
-
-	// face normals
-	glm::vec3 &v0 = vertices[indices[triIndex * 3]];
-	glm::vec3 &v1 = vertices[indices[triIndex * 3 + 1]];
-	glm::vec3 &v2 = vertices[indices[triIndex * 3 + 2]];
-	glm::vec3 hitNormal = glm::cross(v1 - v0, v2 - v0);
-
-	return glm::normalize(hitNormal);
-}
-void Mesh::setNormal(glm::vec3 _nor) {
-	nor = _nor;
-}
-
 const char * Mesh::getFile() {
 	return file.c_str(); //need to do conversion inside this function or else pointer will lose information on the string
 	//very weird
@@ -76,24 +61,22 @@ std::vector<glm::vec2> Mesh::getUVs() {
 }
 
 //decifer this
-bool Mesh::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &tNear, int index) {
+bool Mesh::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &tNear, int &index) {
 	
 	//calculating the intersection of a specific triangle
 	int j = 0;
 	bool intersect = false;
 	int numTris = this->indices.size() / 3;
 	for (uint32_t i = 0; i < numTris; ++i) {
-		const glm::vec3 &v0 = this->vertices[this->indices[j]];
-		const glm::vec3 &v1 = this->vertices[this->indices[j + 1]];
-		const glm::vec3 &v2 = this->vertices[this->indices[j + 2]];
-		float t = INFINITY;
-		float u;
-		float v;
+		glm::vec3 &v0 = this->vertices[this->indices[j]];
+		glm::vec3 &v1 = this->vertices[this->indices[j + 1]];
+		glm::vec3 &v2 = this->vertices[this->indices[j + 2]];
+		float t = INFINITY, u, v;
 		if (rayTriangleIntersect(rayorig, raydir, v0, v1, v2, t) && t < tNear) {
 			//if it intersects set the triangles's index to the intersection index 
 			//and tNear to the intersection distance
 			tNear = t;
-			index = i;
+			index = i; //incrementing number of triangles starting with 1
 			//set intersection to true
 			intersect = true;
 		}
@@ -167,6 +150,21 @@ bool Mesh::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t
 //
 //	return true; // this ray hits the triangle 
 //}
+
+glm::vec3 Mesh::getNormal(glm::vec3 phit, int triIndex)
+{
+
+	// face normals
+	glm::vec3 &v0 = vertices[indices[triIndex * 3]];
+	glm::vec3 &v1 = vertices[indices[triIndex * 3 + 1]];
+	glm::vec3 &v2 = vertices[indices[triIndex * 3 + 2]];
+	glm::vec3 hitNormal = glm::cross(v1 - v0, v2 - v0);
+
+	return glm::normalize(hitNormal);
+}
+void Mesh::setNormal(glm::vec3 _nor) {
+	nor = _nor;
+}
 
 //Möller-Trumbore algorithm
 bool Mesh::rayTriangleIntersect(const glm::vec3 &rayorig, const glm::vec3 &raydir,

@@ -26,7 +26,7 @@ public:
 		std::vector<glm::vec2> UVs);
 	~Mesh();
 
-	glm::vec3 getNormal(glm::vec3 &, int triIndex);
+	glm::vec3 getNormal(glm::vec3 phit, int triIndex);
 	void setNormal(glm::vec3 _nor);
 
 	const char * getFile();
@@ -44,7 +44,7 @@ public:
 	void setUVs(std::vector<glm::vec2> UVs);
 	std::vector<glm::vec2> getUVs();
 
-	bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &tNear, int index);
+	bool intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &tNear, int &index);
 
 	bool rayTriangleIntersect(
 		const glm::vec3 &orig, const glm::vec3 &dir,
