@@ -96,7 +96,7 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 
 			}
 			else //just the ambient color of an object if object IS in shadow
-				surfaceColor += hitObject->getAmb();
+				surfaceColor = hitObject->getAmb();
 		}
 	}
 
@@ -107,7 +107,7 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 void render(vector<shared_ptr<Object>> &objects, vector<shared_ptr<Mesh>> &meshes, vector<Light> &lights, Camera *camera) {
 
 	float fov = camera->getFieldOfView();
-	float f = 3*camera->getFocalLength();
+	float f = /*3**/camera->getFocalLength();
 	float aspectratio = camera->getAspectRatio();
 	float angle = glm::radians(fov * 0.5);
 

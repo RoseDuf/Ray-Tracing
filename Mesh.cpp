@@ -90,7 +90,7 @@ bool Mesh::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t
 //	const glm::vec3 &orig, const glm::vec3 &dir,
 //	const glm::vec3 &v0, const glm::vec3 &v1, const glm::vec3 &v2, float &t) {
 //
-//	float u, v;
+//	/*float u, v;*/
 //
 //	// compute plane's normal
 //	glm::vec3 v0v1 = v1 - v0;
@@ -144,10 +144,10 @@ bool Mesh::intersect(const glm::vec3 &rayorig, const glm::vec3 &raydir, float &t
 //	C = glm::cross(edge2, vp2);
 //	if (glm::dot(N, C) < 0) 
 //		return false; // P is on the right side; 
-//
+///*
 //	u /= denom;
 //	v /= denom;
-//
+//*/
 //	return true; // this ray hits the triangle 
 //}
 
