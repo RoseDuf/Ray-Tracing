@@ -104,7 +104,7 @@ glm::vec3 cast_ray(glm::vec3 rayorig, glm::vec3 &raydir,
 	return surfaceColor;
 }
 
-void render(vector<shared_ptr<Object>> &objects, vector<shared_ptr<Mesh>> &meshes, vector<Light> &lights, Camera *camera) {
+void render(vector<shared_ptr<Object>> &objects, vector<Light> &lights, Camera *camera) {
 
 	float fov = camera->getFieldOfView();
 	float f = /*3**/camera->getFocalLength();
@@ -191,7 +191,7 @@ int main() {
 
 
 	//RENDER SCENE
-	render(objects, mesh, light, cam);
+	render(objects, light, cam);
 
 	//To show that scene was properly rendered with the right values
 	cout << "number of objects" << endl;
