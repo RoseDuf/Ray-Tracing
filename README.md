@@ -3,6 +3,13 @@ Computer Graphics (COMP 371) final project
 
 > GLM library and Cimg needed: ..\CImg_latest\CImg-2.5.5;..\glm;%(AdditionalIncludeDirectories)
 
+Thanks to scratchapixel, I was able to do this project
+####
+https://www.scratchapixel.com/code.php?id=11&origin=/lessons/3d-basic-rendering/ray-tracing-polygon-mesh
+####
+https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates
+
+
 ## Instructions
 
 To change a file simply change the following at line 198 of the code:
